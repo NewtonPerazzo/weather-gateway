@@ -1,0 +1,121 @@
+from pydantic import BaseModel, ConfigDict
+
+class CityForecastAnalysisResponseModel(BaseModel):
+    current_temperature: float
+    current_hour: str
+    max_temperature: float
+    max_temperature_hour: str
+    min_temperature: float
+    min_temperature_hour: str
+    rain_probabily_max_temperature: int
+    rain_probabily_min_temperature: int
+
+class CityHourAnalysisInfo(BaseModel):
+    temperature: float
+    rain_probability: float
+    wind_speed: float
+    humidity: int
+    apparent_temperature: float
+
+class CityHourAnalysisData(BaseModel):
+    hour: str
+    score: int
+    reason: list[str]
+    info: CityHourAnalysisInfo
+
+class CityHourAnalysisResponseModel(BaseModel):
+    current_hour: CityHourAnalysisData | None
+    hours: list[CityHourAnalysisData]
+
+class CurrentWeatherUnitsModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    time: str
+    interval: str
+    temperature_2m: str
+    relative_humidity_2m: str
+    apparent_temperature: str
+    precipitation: str
+    weather_code: str
+    wind_speed_10m: str
+
+class CurrentWeatherModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    time: str
+    interval: int
+    temperature_2m: float | None
+    relative_humidity_2m: int | None
+    apparent_temperature: float | None
+    precipitation: float | None
+    weather_code: int | None
+    wind_speed_10m: float | None
+
+class HourlyWeatherModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    time: list[str]
+    temperature_2m: list[float | None]
+    relative_humidity_2m: list[int | None]
+    apparent_temperature: list[float | None]
+    precipitation_probability: list[int | None]
+    precipitation: list[float | None]
+    weather_code: list[int | None]
+    wind_speed_10m: list[float | None]
+
+class HourlyWeatherUnitsModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    time: str
+    temperature_2m: str
+    relative_humidity_2m: str
+    apparent_temperature: str
+    precipitation_probability: str
+    precipitation: str
+    weather_code: str
+    wind_speed_10m: str
+
+class DailyWeatherUnitsModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    time: str
+    temperature_2m_max: str
+    temperature_2m_min: str
+    apparent_temperature_max: str
+    apparent_temperature_min: str
+    precipitation_sum: str
+    precipitation_probability_max: str
+    weather_code: str
+    sunrise: str
+    sunset: str
+
+class DailyWeatherModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    time: list[str]
+    temperature_2m_max: list[float | None]
+    temperature_2m_min: list[float | None]
+    apparent_temperature_max: list[float | None]
+    apparent_temperature_min: list[float | None]
+    precipitation_sum: list[float | None]
+    precipitation_probability_max: list[int | None]
+    weather_code: list[int | None]
+    sunrise: list[str]
+    sunset: list[str]
+
+class ForecastResponseModel(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    latitude: float
+    longitude: float
+    generationtime_ms: float
+    utc_offset_seconds: int
+    timezone: str
+    timezone_abbreviation: str
+    elevation: float
+    current_units: CurrentWeatherUnitsModel
+    current: CurrentWeatherModel
+    hourly_units: HourlyWeatherUnitsModel
+    hourly: HourlyWeatherModel
+    daily_units: DailyWeatherUnitsModel
+    daily: DailyWeatherModel

@@ -1,0 +1,104 @@
+from typing import Annotated
+
+from app.authentication_dependency import get_current_user
+
+from fastapi import APIRouter, Depends
+
+from app.models.authentication.users_model import (
+    UserActivityModel,
+    UsersModel, 
+    UsersRequestModel,
+    UsersUpdateModel
+) 
+
+users_router = APIRouter(
+    prefix="/users",
+    tags=["Users"]
+)
+
+@users_router.get(
+    "/me",
+    response_model=UsersModel,
+)
+def get_own_profile(
+    current_user: Annotated[
+        UsersModel,
+        Depends(get_current_user),
+    ],
+) -> UsersModel:
+    return current_user
+
+@users_router.get(
+        "/{user_id}",
+        response_model=UsersModel
+    )
+def get_user(
+    user_id: str,
+    current_user: Annotated[
+        UsersModel,
+        Depends(get_current_user),
+    ],
+):  
+    # response = users_service.get_user(user_id=user_id)
+    # return response
+    pass
+
+@users_router.post(
+    "",
+    response_model=UsersModel
+)
+def post_user(
+    user_request: UsersRequestModel,
+):  
+    # response = users_service.post_user(user=user_request)
+    # return response
+    pass
+
+@users_router.patch(
+    "",
+    response_model=UsersModel
+)
+def update_user(
+    current_user: Annotated[
+        UsersModel,
+        Depends(get_current_user),
+    ],
+    user_request: UsersUpdateModel,
+):  
+    # response = users_service.update_user(
+    #     user_id=current_user.id,
+    #     user=user_request,
+    # )
+    # return response
+    pass
+
+@users_router.delete(
+    "/{user_id}",
+)
+def delete_user(
+    current_user: Annotated[
+        UsersModel,
+        Depends(get_current_user),
+    ],
+):  
+    # response = users_service.delete_user(user_id=current_user.id)
+    # return response
+    pass
+
+@users_router.patch(
+    "/{user_id}/activity",
+    response_model=UsersModel
+)
+def change_user_activity(
+    current_user: Annotated[
+        UsersModel,
+        Depends(get_current_user),
+    ],
+    activity: UserActivityModel,
+):  
+    # response = users_service.change_user_activity(
+    #     user_id=current_user.id,
+    #     is_active=activity.is_active,
+    # )
+    # return response
+    pass
