@@ -1,0 +1,11 @@
+services:
+  gateway:
+    build:
+      context: .
+    image: weather-gateway:dev
+    container_name: weather-gateway
+    ports:
+      - "8000:8080"
+    env_file:
+      - .env
+    restart: unless-stopped
