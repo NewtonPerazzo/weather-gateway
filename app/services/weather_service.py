@@ -1,9 +1,12 @@
+from datetime import date
+
 import httpx
 
 from app.integrations.APIIntegration import APIIntegration
-from app.models.weather_analysis.weather_model import CityForecastAnalysisResponseModel, ForecastResponseModel, SearchCityRequest
+from app.models.weather_analysis.weather_model import CityForecastAnalysisResponseModel, CityHourAnalysisResponseModel, ForecastResponseModel, SearchCityRequest
 
 WEATHER_ANALYSIS_URI = '/get-forecast-analysis'
+WEATHER_HOURLY_ANALYSIS_URI = '/get-forecast-hourly-analysis'
 SEARCH_CITY_URI = '/search-city'
 
 class WeatherService():
@@ -32,7 +35,24 @@ class WeatherService():
             response.raise_for_status()
             return response.json()
 
-        return response
+    async def get_forecast_hour_analysis(
+        self,
+        city: str,
+        country_code: str,
+        day: date | None = None,
+    ) -> CityHourAnalysisResponseModel:
+        url = self.get_url(WEATHER_HOURLY_ANALYSIS_URI)
+        params = {
+            'city': city,
+            'country_code': country_code,
+        }
+        if day is not None:
+            params['day'] = day.isoformat()
 
-    def get_url(self, uri):
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, params=params)
+            response.raise_for_status()
+            return response.json()
+
+    def get_url(self, uri: str) -> str:
         return f'{self.__api_integrations.weather_url}{uri}'

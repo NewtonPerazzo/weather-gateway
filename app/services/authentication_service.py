@@ -32,21 +32,19 @@ class AuthenticationService():
             response.raise_for_status()
             return response.json()
 
-    async def reset_password(self, reset_password_data: ResetPasswordBodyModel):
+    async def reset_password(self, reset_password_data: ResetPasswordBodyModel) -> None:
         url = self.get_url(RESET_PASSWORD_URI)
         reset_request_data = ResetPasswordBodyModel.model_dump(reset_password_data)
         async with httpx.AsyncClient() as client:
             response = await client.post(url, json=reset_request_data)
             response.raise_for_status()
-            return response.json()
     
-    async def logout(self, refresh_data: RefreshTokenRequestModel):
+    async def logout(self, refresh_data: RefreshTokenRequestModel) -> None:
         url = self.get_url(LOGOUT_URI)
         refresh_request_data = RefreshTokenRequestModel.model_dump(refresh_data)
         async with httpx.AsyncClient() as client:
             response = await client.post(url, json=refresh_request_data)
             response.raise_for_status()
-            return response.json()
 
-    def get_url(self, uri):
+    def get_url(self, uri: str) -> str:
         return f'{self.__api_integrations.authentication_url}/authentication{uri}'

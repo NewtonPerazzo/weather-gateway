@@ -30,6 +30,10 @@ async def get_forecast(
 
 @weather_router.get("/get-forecast-analysis")
 async def get_forecast_analysis(
+    current_user: Annotated[
+        UsersModel,
+        Depends(get_current_user),
+    ],
     weather_service: WeatherServiceDependency,
     city: str,
     country_code: str,
@@ -42,6 +46,10 @@ async def get_forecast_analysis(
 
 @weather_router.get("/get-forecast-hourly-analysis")
 async def get_forecast_hour_analysis(
+    current_user: Annotated[
+        UsersModel,
+        Depends(get_current_user),
+    ],
     weather_service: WeatherServiceDependency,
     city: str,
     country_code: str,
