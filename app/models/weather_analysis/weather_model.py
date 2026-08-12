@@ -1,5 +1,13 @@
 from pydantic import BaseModel, ConfigDict
 
+class SearchCityRequest(BaseModel):
+    name: str
+    country_code: str
+    count: int = 1
+    language: str = 'en'
+    format: str = 'json'
+    forecast_days: int = 1
+
 class CityForecastAnalysisResponseModel(BaseModel):
     current_temperature: float
     current_hour: str

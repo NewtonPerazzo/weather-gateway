@@ -1,41 +1,36 @@
+from typing import Annotated
+
+import httpx
+from fastapi import Depends, HTTPException, status
 from fastapi.security import (
     HTTPAuthorizationCredentials,
     HTTPBearer,
 )
-from typing import Annotated
 
-from fastapi import Depends
-
-# from app.exceptions.exceptions import (
-#     InactiveUserException,
-#     InvalidAccessTokenException,
-# )
+from app.dependency import APIIntegrationDependency
 from app.models.authentication.users_model import UsersModel
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
-def get_current_user(
+async def get_current_user(
     credentials: Annotated[
         HTTPAuthorizationCredentials | None,
         Depends(bearer_scheme),
     ],
+    api_integration: APIIntegrationDependency,
 ) -> UsersModel:
-    pass
-    # if credentials is None:
-    #     raise InvalidAccessTokenException()
+    if credentials is None or credentials.scheme.lower() != "bearer":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid access token.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    # if credentials.scheme.lower() != "bearer":
-    #     raise InvalidAccessTokenException()
+    url = f"{api_integration.authentication_url}/users/me"
+    headers = {
+        "Authorization": f"Bearer {credentials.credentials}",
+    }
 
-    # payload = authentication_service.validate_access_token(
-    #     access_token=credentials.credentials,
-    # )
+    response = httpx.get(url, headers=headers)
 
-    # user = users_service.get_user(
-    #     user_id=payload.sub,
-    # )
-
-    # if not user.is_active:
-    #     raise InactiveUserException()
-
-    # return user
+    return UsersModel.model_validate(response.json())
