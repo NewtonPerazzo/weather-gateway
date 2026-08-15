@@ -3,7 +3,7 @@ from datetime import date
 import httpx
 
 from app.integrations.APIIntegration import APIIntegration
-from app.models.weather_analysis.weather_model import CityForecastAnalysisResponseModel, CityHourAnalysisResponseModel, ForecastResponseModel, SearchCityRequest
+from app.models.weather_analysis.weather_model import CityForecastAnalysisResponseModel, CityHourAnalysisResponseModel, FilterTime, ForecastResponseModel, SearchCityRequest
 
 WEATHER_ANALYSIS_URI = '/get-forecast-analysis'
 WEATHER_HOURLY_ANALYSIS_URI = '/get-forecast-hourly-analysis'
@@ -40,6 +40,7 @@ class WeatherService():
         city: str,
         country_code: str,
         day: date | None = None,
+        filter_time: FilterTime | None = None,
     ) -> CityHourAnalysisResponseModel:
         url = self.get_url(WEATHER_HOURLY_ANALYSIS_URI)
         params = {
@@ -48,6 +49,8 @@ class WeatherService():
         }
         if day is not None:
             params['day'] = day.isoformat()
+        if filter_time is not None:
+            params['filter'] = filter_time
 
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params)

@@ -7,6 +7,7 @@ from app.dependency import WeatherServiceDependency
 from app.models.weather_analysis.weather_model import (
     CityForecastAnalysisResponseModel,
     CityHourAnalysisResponseModel,
+    FilterTime,
     ForecastResponseModel,
     SearchCityRequest,
 )
@@ -54,9 +55,11 @@ async def get_forecast_hour_analysis(
     city: str,
     country_code: str,
     day: date | None = None,
+    filter: FilterTime | None = None,
 ) -> CityHourAnalysisResponseModel:
     return await weather_service.get_forecast_hour_analysis(
         city=city,
         country_code=country_code,
         day=day,
+        filter_time=filter,
     )

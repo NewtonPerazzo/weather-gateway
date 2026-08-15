@@ -1,4 +1,8 @@
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict
+
+FilterTime = Literal["morning", "night", "evening", "dawn"]
 
 class SearchCityRequest(BaseModel):
     name: str
