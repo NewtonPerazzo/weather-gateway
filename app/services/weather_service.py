@@ -63,6 +63,11 @@ class WeatherService():
 
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params)
+            logger.info(
+                "Weather response: status=%s body=%s",
+                response.status_code,
+                response.text,
+            )
             response.raise_for_status()
             return response.json()
 
