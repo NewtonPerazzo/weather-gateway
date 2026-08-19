@@ -2,6 +2,9 @@ import httpx
 
 from app.integrations.APIIntegration import APIIntegration
 from app.models.authentication.authentication_model import LoginRequestModel, RefreshTokenRequestModel, ResetPasswordBodyModel, TokenResponseModel
+import logging
+
+logger = logging.getLogger(__name__)
 
 LOGIN_URI = '/login'
 REFRESH_URI = '/refresh'
@@ -18,9 +21,13 @@ class AuthenticationService():
     async def login(self, login_data: LoginRequestModel) -> TokenResponseModel:
         url = self.get_url(LOGIN_URI)
         login_request_data = LoginRequestModel.model_dump(login_data)   
-
         async with httpx.AsyncClient() as client:
             response = await client.post(url, json=login_request_data)
+            logger.info(
+                "Authentication response: status=%s body=%s",
+                response.status_code,
+                response.text,
+            )
             response.raise_for_status()
             return response.json()
 

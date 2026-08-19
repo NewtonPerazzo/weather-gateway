@@ -4,6 +4,10 @@ import httpx
 
 from app.integrations.APIIntegration import APIIntegration
 from app.models.weather_analysis.weather_model import CityForecastAnalysisResponseModel, CityHourAnalysisResponseModel, FilterTime, ForecastResponseModel, SearchCityRequest
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 WEATHER_ANALYSIS_URI = '/get-forecast-analysis'
 WEATHER_HOURLY_ANALYSIS_URI = '/get-forecast-hourly-analysis'
@@ -32,6 +36,11 @@ class WeatherService():
 
         async with httpx.AsyncClient() as client:
             response = await client.post(url, json=city_request_data)
+            logger.info(
+                "Weather response: status=%s body=%s",
+                response.status_code,
+                response.text,
+            )
             response.raise_for_status()
             return response.json()
 
