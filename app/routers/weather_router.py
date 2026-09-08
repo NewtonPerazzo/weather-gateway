@@ -1,7 +1,7 @@
 from typing import Annotated
 from datetime import date
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 
 from app.dependency import WeatherServiceDependency
 from app.models.weather_analysis.weather_model import (
@@ -63,3 +63,31 @@ async def get_forecast_hour_analysis(
         day=day,
         filter_time=filter,
     )
+
+
+@weather_router.post("/reports")
+async def create_report(
+    current_user: Annotated[UsersModel, Depends(get_current_user)],
+    weather_service: WeatherServiceDependency,
+    city_key: str,
+    day: date | None = None,
+    filter: FilterTime | None = None,
+) -> dict:
+    return await weather_service.create_report(
+        city_key=city_key,
+        day=day,
+        filter_time=filter,
+    )
+
+
+@weather_router.get("/reports", response_model=None)
+async def get_report(
+    current_user: Annotated[UsersModel, Depends(get_current_user)],
+    weather_service: WeatherServiceDependency,
+    task_id: str,
+):
+    content, status, content_disposition = await weather_service.get_report(task_id)
+    if content is None:
+        return status or {"task_id": task_id, "status": "processing"}
+    headers = {"Content-Disposition": content_disposition} if content_disposition else {}
+    return Response(content=content, media_type="application/pdf", headers=headers)

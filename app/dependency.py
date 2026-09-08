@@ -15,6 +15,7 @@ def get_api_integration(
     return APIIntegration(
         authentication_url=settings.auth_service_url,
         weather_url=settings.weather_service_url,
+        request_timeout_seconds=settings.request_timeout_seconds,
     )
 
 
