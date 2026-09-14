@@ -70,11 +70,13 @@ async def create_report(
     current_user: Annotated[UsersModel, Depends(get_current_user)],
     weather_service: WeatherServiceDependency,
     city_key: str,
+    city_name: str | None = None,
     day: date | None = None,
     filter: FilterTime | None = None,
 ) -> dict:
     return await weather_service.create_report(
         city_key=city_key,
+        city_name=city_name,
         day=day,
         filter_time=filter,
     )
@@ -86,8 +88,12 @@ async def get_report(
     weather_service: WeatherServiceDependency,
     task_id: str,
 ):
-    content, status, content_disposition = await weather_service.get_report(task_id)
+    content, status, content_disposition, content_type = await weather_service.get_report(task_id)
     if content is None:
         return status or {"task_id": task_id, "status": "processing"}
     headers = {"Content-Disposition": content_disposition} if content_disposition else {}
-    return Response(content=content, media_type="application/pdf", headers=headers)
+    return Response(
+        content=content,
+        media_type=content_type or "application/octet-stream",
+        headers=headers,
+    )

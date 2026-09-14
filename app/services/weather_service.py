@@ -75,10 +75,13 @@ class WeatherService():
     async def create_report(
         self,
         city_key: str,
+        city_name: str | None = None,
         day: date | None = None,
         filter_time: FilterTime | None = None,
     ) -> dict:
         params = {"city_key": city_key}
+        if city_name is not None:
+            params["city_name"] = city_name
         if day is not None:
             params["day"] = day.isoformat()
         if filter_time is not None:
@@ -89,13 +92,22 @@ class WeatherService():
             response.raise_for_status()
             return response.json()
 
-    async def get_report(self, task_id: str) -> tuple[bytes | None, dict | None, str | None]:
+    async def get_report(
+        self,
+        task_id: str,
+    ) -> tuple[bytes | None, dict | None, str | None, str | None]:
         async with httpx.AsyncClient(timeout=self.__api_integrations.request_timeout_seconds) as client:
             response = await client.get(self.get_url(REPORTS_URI), params={"task_id": task_id})
             response.raise_for_status()
-            if response.headers.get("content-type", "").startswith("application/pdf"):
-                return response.content, None, response.headers.get("content-disposition")
-            return None, response.json(), None
+            content_disposition = response.headers.get("content-disposition")
+            if content_disposition:
+                return (
+                    response.content,
+                    None,
+                    content_disposition,
+                    response.headers.get("content-type"),
+                )
+            return None, response.json(), None, None
 
     def get_url(self, uri: str) -> str:
         return f'{self.__api_integrations.weather_url}{uri}'
