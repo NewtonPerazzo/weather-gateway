@@ -1,1 +1,1 @@
-
+"""Gateway error handling."""

@@ -5,6 +5,7 @@ from app.routers.health_router import health_router
 from app.routers.weather_router import weather_router
 from app.routers.authentication_router import authentication_router
 from app.routers.users_router import users_router
+from app.exceptions.exception_handlers import register_exception_handlers
 from config.settings import get_settings
 
 
@@ -14,6 +15,8 @@ app = FastAPI(
     title=settings.app_name,
     version="1.0.0",
 )
+
+register_exception_handlers(app)
 
 app.add_middleware(
     CORSMiddleware,
